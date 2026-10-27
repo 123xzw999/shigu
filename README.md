@@ -1,14 +1,21 @@
-# 交易很轻松
+# 识股 · 交易很轻松
 
-> 新浪财经数据 + 缠论 + 筹码分布 + 主力行为识别的本地量化分析终端
-> 一个 `.bat` 双击即用，零第三方依赖（纯 Python 标准库 + 原生 JS Canvas）
+> 新浪财经数据 + 缠论 + 筹码分布 + 主力行为识别 + 逐板块转折点判断
+> 电脑上 `.bat` 双击即用；安卓装 APK。零第三方依赖（纯 Python 标准库 + 原生 JS Canvas）
 
-**在线介绍页**：https://123xzw999.github.io/jiaoyi-henqingsong/
+**下载页（安卓 APK / 使用说明）**：https://123xzw999.github.io/shigu/
+**直接下 APK**：https://github.com/123xzw999/shigu/releases/latest
 
-> ⚠️ **这个工具必须下载到本地跑，网页版用不了。**
-> 新浪财经的接口没有 CORS 头，并且会校验 `Referer` —— 从 `*.github.io` 发起的请求
-> 会被直接返回 `Forbidden`。所以行情和 K 线只能由本地 Python 后端代理转发。
-> 上面的在线页是项目介绍，不是可运行版本。
+| 平台 | 怎么用 |
+|---|---|
+| Android | 下载页点「下载识股 APK」→ 允许未知来源 → 安装。首次打开等 3~5 秒 |
+| Windows / macOS / Linux | 双击 `启动.bat`（或 `python server.py`），浏览器自动打开 |
+
+> ⚠️ **为什么没有纯网页版。**
+> 新浪的行情接口会校验 `Referer`，浏览器发不了自定义 Referer，从任何网站发起的请求
+> 都会被返回 `Forbidden`；K 线接口也没有 CORS 头。所以抓取必须由 Python 侧完成 ——
+> 静态托管（GitHub Pages）只能放介绍页，跑不了真正的分析。
+> 安卓版就是把 Python 服务打包进 APK，在手机本地跑，界面用 WebView 加载。
 
 ---
 
