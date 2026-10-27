@@ -44,7 +44,9 @@ android.meta_data =
 # Android 9+ 对 targetSdk>=28 的应用默认禁明文 HTTP，而 APK 里的 WebView 要连
 # 127.0.0.1:8765。p4a 的清单模板留了 {{ args.extra_manifest_application_arguments }} 插槽，
 # buildozer 对应这个选项，把内容塞进 <application> 标签里。
-android.extra_manifest_application_arguments = android/extra_manifest_app.xml
+# 必须绝对路径：p4a 会在 dist 目录（.buildozer/android/platform/.../dists/shigu）里
+# 读这个文件，相对路径会 FileNotFoundError。GitHub runner 的工作目录是固定的。
+android.extra_manifest_application_arguments = /home/runner/work/shigu/shigu/android/extra_manifest_app.xml
 
 # ---------------------------------------------------------------- 打包
 p4a.bootstrap = sdl2
