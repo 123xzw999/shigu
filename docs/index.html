@@ -3,315 +3,352 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>交易很轻松 · 新浪财经量化分析终端</title>
-<meta name="description" content="基于新浪财经数据的本地量化分析终端：缠论、筹码分布、主力行为识别、主动/被动基金评价、全球风险偏好指数。">
+<title>识股 · Android 量化分析终端</title>
+<meta name="description" content="识股 —— 新浪财经数据驱动的量化分析终端。缠论、筹码分布、主力行为识别、逐板块转折点判断。安卓 APK 直接下载安装。">
+<meta name="theme-color" content="#080a0e">
 <style>
 :root{
-  --red:#e60000; --up:#ef232a; --down:#14b143;
-  --bg:#f5f6f8; --card:#fff; --line:#e4e7eb;
-  --t1:#1a1a1a; --t2:#555b62; --t3:#8d949c;
+  --bg:#080a0e; --bg2:#0d1117; --card:#12171f; --line:#1e2630;
+  --gold:#f5c542; --gold2:#c9962a; --gold-l:#ffe9b0;
+  --t1:#e8edf4; --t2:#9aa5b4; --t3:#6b7684;
+  --up:#ef232a; --down:#14b143;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
-  background:var(--bg);color:var(--t1);
-  font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
+  background:var(--bg); color:var(--t1);
+  font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-a{color:#0b6cbf;text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:920px;margin:0 auto;padding:0 22px}
 
-/* hero */
-.hero{
-  background:linear-gradient(135deg,#c40000 0%,#e60000 45%,#ff4d4d 100%);
-  color:#fff;padding:56px 0 46px;position:relative;overflow:hidden;
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(600px 400px at 50% -10%, rgba(245,197,66,.14), transparent 70%),
+    radial-gradient(500px 380px at 85% 20%, rgba(31,111,235,.10), transparent 70%),
+    radial-gradient(520px 400px at 10% 60%, rgba(239,35,42,.07), transparent 70%);
 }
-.hero:after{
-  content:"";position:absolute;right:-80px;top:-80px;width:340px;height:340px;
-  border-radius:50%;background:rgba(255,255,255,.07);
-}
-.hero h1{font-size:38px;font-weight:800;letter-spacing:1px;margin-bottom:10px}
-.hero .sub{font-size:16px;opacity:.92;max-width:640px;line-height:1.8}
-.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
-.badge{
-  font-size:12px;padding:4px 11px;border-radius:20px;
-  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
-  backdrop-filter:blur(4px);
-}
+main,header,footer{position:relative;z-index:1}
 
-/* 区块 */
-section{padding:44px 0}
-h2{font-size:23px;font-weight:800;margin-bottom:6px;letter-spacing:.3px}
-h2 .bar{display:inline-block;width:4px;height:20px;background:var(--red);
-  border-radius:2px;margin-right:10px;vertical-align:-3px}
-.lead{color:var(--t2);margin-bottom:24px;font-size:14.5px}
-
-/* 提示框 */
-.notice{
-  background:#fff9f0;border:1px solid #ffe0b8;border-left:4px solid #f0a020;
-  border-radius:6px;padding:16px 18px;margin-bottom:26px;font-size:14px;color:#7a4f10;
+/* ---------- Hero ---------- */
+.hero{padding:76px 0 56px;text-align:center}
+.logo{
+  font-family:"STXingkai","华文行楷","STKaiti","KaiTi","楷体",serif;
+  font-size:clamp(76px,20vw,148px); font-weight:700; line-height:1.05;
+  letter-spacing:.06em; display:inline-block;
+  background:linear-gradient(180deg,#fff6d8 0%,var(--gold-l) 18%,var(--gold) 46%,var(--gold2) 74%,#7d5713 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 26px rgba(245,197,66,.42)) drop-shadow(0 8px 18px rgba(0,0,0,.7));
+  animation:glow 4.5s ease-in-out infinite;
 }
-.notice b{color:#a86410}
-.notice code{background:#fff;padding:1px 5px;border-radius:3px;border:1px solid #f0d9b5;
-  font-size:13px;font-family:ui-monospace,Consolas,monospace}
-
-/* 功能网格 */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
-.card{
-  background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px 20px;
-  transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.03);
+@keyframes glow{
+  0%,100%{filter:drop-shadow(0 0 22px rgba(245,197,66,.36)) drop-shadow(0 8px 18px rgba(0,0,0,.7))}
+  50%{filter:drop-shadow(0 0 38px rgba(245,197,66,.62)) drop-shadow(0 8px 18px rgba(0,0,0,.7))}
 }
-.card:hover{box-shadow:0 6px 20px rgba(0,0,0,.08);transform:translateY(-2px)}
-.card .ic{font-size:20px;margin-bottom:8px;display:block}
-.card h3{font-size:15.5px;font-weight:700;margin-bottom:6px}
-.card p{font-size:13.5px;color:var(--t2);line-height:1.7}
-.card .tagline{
-  display:inline-block;margin-top:9px;font-size:11.5px;color:var(--red);
-  background:#fff1f0;border:1px solid #ffd6d3;border-radius:3px;padding:1px 7px;
+.tagline{
+  margin-top:6px; font-size:13px; letter-spacing:.42em; color:var(--t3);
+  padding-left:.42em;
 }
-
-/* 截图 */
-.shot{
-  border:1px solid var(--line);border-radius:8px;overflow:hidden;
-  box-shadow:0 10px 34px rgba(0,0,0,.1);background:#fff;
+.slogan{
+  margin-top:30px; font-size:clamp(12.5px,3.4vw,18px); color:#cfd8e3;
+  font-family:"STKaiti","KaiTi","楷体",serif; letter-spacing:.06em;
+  white-space:nowrap;
 }
-.shot img{display:block;width:100%}
-.shot .cap{padding:10px 16px;font-size:12.5px;color:var(--t3);border-top:1px solid var(--line)}
-
-/* 代码块 */
-pre{
-  background:#1e242b;color:#d6dee6;border-radius:8px;padding:18px 20px;
-  font:13.5px/1.9 ui-monospace,Consolas,"Courier New",monospace;
-  overflow-x:auto;margin:14px 0;
+.slogan2{
+  margin-top:8px; font-size:clamp(11.5px,3vw,15px); font-weight:700;
+  font-family:"STKaiti","KaiTi","楷体",serif; letter-spacing:.16em;
+  background:linear-gradient(180deg,#ff6b6b 0%,#e01f1f 55%,#8f0000 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 6px rgba(224,31,31,.35));
 }
-pre .c{color:#6b7a89}
-pre .g{color:#7dd3a0}
-pre .y{color:#f0c674}
+.lead{margin-top:26px;color:var(--t2);font-size:14.5px;max-width:620px;margin-left:auto;margin-right:auto}
 
-/* 步骤 */
-.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:8px}
-.step{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 18px;position:relative}
+.dlbox{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.dl{
+  display:inline-flex;align-items:center;gap:11px;
+  padding:16px 42px;border-radius:44px;
+  background:linear-gradient(180deg,#ffd964,#f0b91f 55%,#c9962a);
+  color:#231a05;font-size:17px;font-weight:800;letter-spacing:.04em;
+  box-shadow:0 10px 30px rgba(245,197,66,.28),0 2px 0 rgba(255,255,255,.45) inset;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.dl:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(245,197,66,.42)}
+.dl:active{transform:translateY(0)}
+.dl svg{width:20px;height:20px}
+.dlmeta{font-size:12.5px;color:var(--t3)}
+.dlmeta b{color:var(--gold);font-weight:600}
+.alt{margin-top:6px;font-size:12.5px;color:var(--t3)}
+.alt a{color:#58a6ff;border-bottom:1px dotted #58a6ff55}
+
+section{padding:52px 0}
+h2{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:.3px}
+h2::before{content:"";display:inline-block;width:4px;height:19px;background:var(--gold);
+  border-radius:2px;margin-right:11px;vertical-align:-3px}
+.sub{color:var(--t3);font-size:13.5px;margin-bottom:26px}
+
+.steps{display:grid;gap:14px}
+.step{
+  display:flex;gap:16px;align-items:flex-start;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+}
 .step .n{
-  position:absolute;top:-11px;left:16px;width:24px;height:24px;border-radius:50%;
-  background:var(--red);color:#fff;font-size:13px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
+  flex:0 0 30px;height:30px;border-radius:50%;
+  background:linear-gradient(180deg,#ffe9b0,#c9962a);color:#231a05;
+  font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;
 }
-.step h4{font-size:14px;font-weight:700;margin:6px 0 5px}
-.step p{font-size:13px;color:var(--t2);line-height:1.65}
+.step h3{font-size:14.5px;font-weight:700;margin-bottom:3px}
+.step p{font-size:13.5px;color:var(--t2);line-height:1.65}
+.step code{
+  background:#1c232c;color:#ffd964;padding:1px 6px;border-radius:4px;
+  font-family:Consolas,Monaco,monospace;font-size:12.5px;
+}
 
-/* 算法表 */
-.algo{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.algo-row{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:14px 20px;
-  border-bottom:1px solid var(--line);font-size:13.5px}
-.algo-row:last-child{border-bottom:none}
-.algo-row .k{font-weight:700;color:var(--t1)}
-.algo-row .v{color:var(--t2);line-height:1.7}
-.algo-row code{background:#f4f6f8;padding:1px 5px;border-radius:3px;
-  font:12.5px ui-monospace,Consolas,monospace;color:#b02a2a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;
+  transition:border-color .2s ease,transform .2s ease;
+}
+.card:hover{border-color:#2b3542;transform:translateY(-2px)}
+.card .ico{font-size:19px;margin-bottom:9px;display:block}
+.card h3{font-size:14.5px;font-weight:700;margin-bottom:6px}
+.card p{font-size:13px;color:var(--t2);line-height:1.65}
 
-/* 页脚 */
+.faq{display:grid;gap:10px}
+details{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;
+}
+summary{cursor:pointer;font-size:14px;font-weight:600;list-style:none;display:flex;
+  justify-content:space-between;align-items:center;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--gold);font-size:18px;font-weight:400;line-height:1}
+details[open] summary::after{content:"−"}
+details p{margin-top:10px;font-size:13.5px;color:var(--t2);line-height:1.7}
+details code{background:#1c232c;color:#ffd964;padding:1px 6px;border-radius:4px;
+  font-family:Consolas,Monaco,monospace;font-size:12.5px}
+
+.note{
+  border-left:3px solid var(--gold);background:rgba(245,197,66,.07);
+  padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;
+  font-size:13.5px;color:#d5dde7;line-height:1.7;
+}
+.warn{
+  border-left:3px solid var(--up);background:rgba(239,35,42,.07);
+  padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;
+  font-size:13.5px;color:#d5dde7;line-height:1.7;
+}
+.note b,.warn b{color:#fff}
+
 footer{
-  background:#1e242b;color:#8b98a5;padding:34px 0;font-size:13px;line-height:1.9;
+  border-top:1px solid var(--line);margin-top:40px;padding:30px 0 44px;
+  text-align:center;color:var(--t3);font-size:12.5px;line-height:1.9;
 }
-footer b{color:#d6dee6}
-footer .warn{color:#f0a020;margin-top:10px}
-.btn{
-  display:inline-block;background:#fff;color:var(--red);font-weight:700;
-  padding:11px 26px;border-radius:6px;font-size:14.5px;margin-top:22px;
-  box-shadow:0 4px 16px rgba(0,0,0,.16);transition:.18s;
+footer a{color:#58a6ff}
+
+@media (max-width:400px){
+  .slogan{white-space:normal;line-height:1.9}
 }
-.btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.22);text-decoration:none}
-.btn.ghost{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);
-  box-shadow:none;margin-left:10px}
+@media (max-width:520px){
+  .hero{padding:54px 0 40px}
+  section{padding:42px 0}
+  .dl{padding:15px 32px;font-size:16px}
+}
 </style>
 </head>
 <body>
 
-<div class="hero">
+<header class="hero">
   <div class="wrap">
-    <h1>交易很轻松</h1>
-    <p class="sub">
-      基于新浪财经公开数据的<b>本地量化分析终端</b>。缠论结构、CYQ 筹码分布、主力行为识别、
-      主动/被动基金分离评价、全球风险偏好指数 —— 一个 <code>.bat</code> 双击就能跑。
+    <div class="logo">识股</div>
+    <div class="tagline">SHI GU · QUANT TERMINAL</div>
+
+    <p class="slogan">量变到质变的过程　需要的不是天赋　而是坚持和耐心</p>
+    <p class="slogan2">—— 坚持就是胜利</p>
+
+    <p class="lead">
+      新浪财经数据驱动的本地量化终端。缠论结构、CYQ 筹码分布、主力行为识别，
+      加上<b style="color:var(--gold)">逐板块的转折点概率模型</b> —— 判断现在是不是趋势的拐点。
     </p>
-    <div class="badges">
-      <span class="badge">Python 3.9+</span>
-      <span class="badge">零第三方依赖</span>
-      <span class="badge">5 秒轮询</span>
-      <span class="badge">MIT License</span>
-      <span class="badge">8600+ 行</span>
+
+    <div class="dlbox">
+      <a class="dl" id="dl" href="https://github.com/123xzw999/shigu/releases/latest">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        下载识股 APK
+      </a>
+      <div class="dlmeta" id="dlmeta">Android 7.0+ · arm64 · 点开即装</div>
+      <div class="alt">
+        装不上？看 <a href="#faq">常见问题</a> ·
+        <a href="https://github.com/123xzw999/shigu">源码</a>
+      </div>
     </div>
-    <a class="btn" href="https://github.com/123xzw999/jiaoyi-henqingsong">查看源码</a>
-    <a class="btn ghost" href="#start">如何运行</a>
   </div>
-</div>
+</header>
 
-<div class="wrap">
+<main>
 
-  <section>
-    <div class="notice">
-      <b>⚠️ 这是本地运行的工具，不能直接在网页里用。</b><br>
-      新浪财经的接口<b>没有 CORS 头</b>，并且会校验 <code>Referer</code> ——
-      从 <code>*.github.io</code> 发起的请求会被直接返回 <code>Forbidden</code>。
-      所以行情和 K 线必须由本地 Python 后端代理转发，浏览器里拿不到。
-      下面的截图是真实运行效果，想用得把代码下载到本地跑。
-    </div>
-
-    <h2><span class="bar"></span>它解决什么问题</h2>
-    <p class="lead">把「看盘软件里散落的信息」压成一套可量化的结论，而不是再做一个行情网页。</p>
-
-    <div class="grid">
-      <div class="card">
-        <span class="ic">📊</span>
-        <h3>数据层</h3>
-        <p>新浪财经实时行情、五档盘口、日/周/月/5·15·30·60 分钟 K 线、行业板块、
-           场外基金净值、外围市场。行情 5 秒一轮，深度分析 30 秒一轮。</p>
-        <span class="tagline">20+ 接口 · 分层刷新</span>
-      </div>
-      <div class="card">
-        <span class="ic">🧮</span>
-        <h3>指标内核</h3>
-        <p>纯 Python 实现 40+ 指标，命名与默认参数对齐 pandas-ta，分组对齐
-           srl-python-indicators。EMA/RMA 会跳过前导空值——这个细节决定了 MACD 是否为空。</p>
-        <span class="tagline">SMA EMA RSI MACD ADX KDJ OBV CMF Supertrend</span>
-      </div>
-      <div class="card">
-        <span class="ic">🕸️</span>
-        <h3>缠论</h3>
-        <p>K线包含处理 → 分型 → 笔（老笔标准）→ 线段（特征序列）→ 中枢 → 背驰 → 一二三买卖点。
-           不是画几条折线，是真按原文口径算的。</p>
-        <span class="tagline">背驰用 MACD 面积比较</span>
-      </div>
-      <div class="card">
-        <span class="ic">🎯</span>
-        <h3>筹码分布（核心）</h3>
-        <p>CYQ 三角分布 + 换手衰减 + <b>主力/散户双层模型</b>。两层用不同尖锐度的分布核：
-           主力集中在均价、散户铺满区间，再配合位置权重，两个分布才能在价格上分开。</p>
-        <span class="tagline">主力集中区 · 散户集中区 · POC · 价值区</span>
-      </div>
-      <div class="card">
-        <span class="ic">🏭</span>
-        <h3>主力行为</h3>
-        <p>威科夫六阶段（吸筹/洗盘/拉升/派发/下跌/横盘）软打分 + softmax，
-           并把历史切成片段，算出<b>每个阶段的成交量加权成本</b>。</p>
-        <span class="tagline">避免硬阈值导致阶段跳变</span>
-      </div>
-      <div class="card">
-        <span class="ic">💼</span>
-        <h3>基金：主动 vs 被动</h3>
-        <p>两类基金优劣标准完全不同：被动看跟踪误差，主动看 Jensen Alpha / 信息比率。
-           还会反推「这只基金到底有多主动」，主动产品相关性 0.98 直接提示「伪主动」。</p>
-        <span class="tagline">11 个行业基准自动匹配</span>
-      </div>
-      <div class="card">
-        <span class="ic">🌍</span>
-        <h3>外围市场 + GRAI</h3>
-        <p>美股/港股/日经/外汇/商品 31 个标的，压成一个 <b>全球风险偏好指数</b>：
-           美股 +0.34、恒生 +0.20、美元人民币 -0.16、黄金 -0.10……并给出对 A 股的传导判断。</p>
-        <span class="tagline">Risk-On / Risk-Off</span>
-      </div>
-      <div class="card">
-        <span class="ic">⭐</span>
-        <h3>TRS 趋势共振评分</h3>
-        <p>七个维度各自 tanh 软饱和到 [-1,1] 再加权。为什么不用线性求和？
-           因为 RSI 能到 90、MACD 柱能很大，线性相加会让某个维度吞掉其他所有维度。</p>
-        <span class="tagline">趋势 动量 量能 筹码 缠论 形态 风险</span>
+<section class="wrap">
+  <h2>三步装好</h2>
+  <p class="sub">不用电脑，手机浏览器直接下载</p>
+  <div class="steps">
+    <div class="step">
+      <div class="n">1</div>
+      <div>
+        <h3>点上面的按钮下载</h3>
+        <p>下载的是 <code>shigu-x.x.x-arm64-v8a-debug.apk</code>，约 30MB。
+           微信 / QQ 内置浏览器可能拦 APK，点右上角「在浏览器打开」再下。</p>
       </div>
     </div>
-  </section>
-
-  <section>
-    <h2><span class="bar"></span>界面</h2>
-    <p class="lead">新浪财经风格，全部原生 Canvas 手绘，没有任何 CDN 依赖。</p>
-    <div class="shot">
-      <img src="shot.png" alt="交易很轻松 界面截图">
-      <div class="cap">个股列表 · 左侧自选 · 顶部全球市场条 · 右侧七维评分与筹码分布</div>
-    </div>
-  </section>
-
-  <section id="start">
-    <h2><span class="bar"></span>三步跑起来</h2>
-    <p class="lead">只要有 Python 3.9+，不需要 pip install 任何东西。</p>
-
-    <div class="steps">
-      <div class="step">
-        <div class="n">1</div>
-        <h4>下载</h4>
-        <p>页面上方「Code → Download ZIP」解压，或者
-           <code>git clone</code> 下来。</p>
-      </div>
-      <div class="step">
-        <div class="n">2</div>
-        <h4>双击启动.bat</h4>
-        <p>Windows 直接双击 <b>启动.bat</b>，控制台开始打印抓取日志，
-           浏览器自动打开界面。</p>
-      </div>
-      <div class="step">
-        <div class="n">3</div>
-        <h4>输入代码</h4>
-        <p>顶部搜 <code>600519</code> / <code>茅台</code> / <code>510300</code> /
-           <code>AAPL</code>，回车即可。</p>
+    <div class="step">
+      <div class="n">2</div>
+      <div>
+        <h3>允许安装未知来源</h3>
+        <p>点开下载好的文件，系统提示「不允许安装」→ 点<b>设置</b> → 打开
+           <b>允许来自此来源的应用</b> → 返回继续安装。</p>
       </div>
     </div>
-
-    <pre><span class="c"># 命令行方式（也可以双击 终端分析.bat）</span>
-python server.py              <span class="c"># 启动服务 → http://127.0.0.1:8765</span>
-python cli.py 600519          <span class="c"># 终端直接看分析报告</span>
-python cli.py 600519 000001 510300   <span class="c"># 批量</span>
-
-<span class="c"># 端口被占用会自动往后找，最多试 12 个</span>
-<span class="c"># 重复双击启动.bat 会检测到已有实例，直接开浏览器</span></pre>
-  </section>
-
-  <section>
-    <h2><span class="bar"></span>几个关键设计</h2>
-    <div class="algo">
-      <div class="algo-row">
-        <div class="k">筹码双层分离</div>
-        <div class="v">
-          <code>m_t = 0.5 + 0.42·tanh(0.9(vr-1) + 5r + 1.8(0.5-p))</code><br>
-          低位放量上涨 → 主力吸筹占比高；高位放量下跌 → 主力派发。
-          两层各自衰减，且用不同 sharp 的三角核（主力 1.85 / 散户 0.42），
-          这样即使比例相同，分布形状也不同。
-        </div>
-      </div>
-      <div class="algo-row">
-        <div class="k">GRAI</div>
-        <div class="v">
-          <code>100·tanh(Σ wᵢ·(涨跌幅ᵢ/典型日波动ᵢ) + 0.15·(美股52周分位-0.5)·2)</code><br>
-          每个市场按自己的波动特性标准化，避免纳指跌 1% 和人民币跌 0.1% 被等权对待。
-        </div>
-      </div>
-      <div class="algo-row">
-        <div class="k">TRS 评分</div>
-        <div class="v">
-          <code>S = 100·tanh(2.2·ΣwᵢDᵢ/Σwᵢ)</code>，<code>Dᵢ ∈ [-1,1]</code><br>
-          软饱和等价于「温和的软阈值」——小值区近似线性、大值区饱和。
-          指数/场外基金缺筹码时，该维度权重自动让给其他维度。
-        </div>
-      </div>
-      <div class="algo-row">
-        <div class="k">基金绝对收益约束</div>
-        <div class="v">
-          相对基准再好，只要还在亏钱就不能算「良好」：
-          年化收益为负时按 <code>max(0.25, 1 + 年化/10)</code> 打折。
-        </div>
+    <div class="step">
+      <div class="n">3</div>
+      <div>
+        <h3>打开，等 3 秒</h3>
+        <p>首次启动要在手机本地起数据服务并拉行情，黑屏 3~5 秒是正常的，
+           之后就是完整界面。搜索框输代码或名称即可。</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-</div>
+<section class="wrap">
+  <h2>它做什么</h2>
+  <p class="sub">不是又一个看盘软件 —— 是把「技术面处在什么位置」讲清楚</p>
+  <div class="grid">
+    <div class="card">
+      <span class="ico">🎯</span>
+      <h3>转折点判断</h3>
+      <p>16 个板块各一套概率模型（日K / 周K 分开）。给出底部反转、顶部反转的概率，
+         以及这个概率在过去一年里的<b>分位</b> —— 分位比绝对阈值可靠得多。</p>
+    </div>
+    <div class="card">
+      <span class="ico">📐</span>
+      <h3>缠论结构</h3>
+      <p>K线包含处理 → 分型 → 笔 → 线段 → 中枢 → 背驰 → 买卖点。完整链路，不是画几条折线。</p>
+    </div>
+    <div class="card">
+      <span class="ico">📊</span>
+      <h3>CYQ 筹码分布</h3>
+      <p>三角分布 + 换手衰减，算出主力 / 散户成本、控盘度、获利盘比例、集中度，
+         以及成交量分布图。</p>
+    </div>
+    <div class="card">
+      <span class="ico">🔄</span>
+      <h3>主力阶段</h3>
+      <p>威科夫四阶段（吸筹 / 拉升 / 派发 / 下跌）概率打分，并给出每个阶段的成交量加权成本。</p>
+    </div>
+    <div class="card">
+      <span class="ico">🧮</span>
+      <h3>趋势共振评分</h3>
+      <p>七维度（趋势 / 动量 / 量能 / 筹码 / 缠论 / 形态 / 风险）各自标准化后用 tanh 软饱和加权，
+         避免单一指标在极端行情下吞掉其他维度。</p>
+    </div>
+    <div class="card">
+      <span class="ico">🌍</span>
+      <h3>外围与板块</h3>
+      <p>美股 / 港股 / 外汇 / 商品 + 201 个细分板块 + 18 个主题，连点两级下钻到个股。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="faq">
+  <h2>关于准确率，说清楚</h2>
+  <p class="sub">这一节不好看，但你应该知道</p>
+  <div class="warn">
+    <b>转折判断的准确率是 30% 左右，不是 80%。</b><br>
+    16 个板块 × 日/周 × 双向，49 个可信组合的样本外命中率平均 <b>29.8%</b>，最高 53.3%；
+    随机基线约 6~9%。它比瞎猜好 3.5~6 倍，但远谈不上「精准预测」。
+  </div>
+  <div class="note">
+    <b>那它有什么用？</b>看盈亏比。信号出现后 30 个交易日的最大浮盈中位数：
+    底部信号 <b>24.8%</b>（随机位置只有 7.4%），顶部信号 <b>16.8%</b>（随机 6.6%）。
+    <br><br>
+    翻译成人话：<b>它没法告诉你哪一根是最低点，但能告诉你现在是不是比瞎买好得多的位置。</b>
+    交易上这就够了 —— 你不需要买在最低那一根。
+  </div>
+  <p class="sub" style="margin-top:22px;margin-bottom:0">
+    所以界面上每行都给两个数字：概率（绝对）+ 分位（相对）。<b>优先看分位</b> ——
+    绝对阈值是在某段历史上标定的，换一段时间概率分布就漂了。
+  </p>
+</section>
+
+<section class="wrap">
+  <h2>常见问题</h2>
+  <div class="faq">
+    <details>
+      <summary>安装时提示「解析包错误」或装不上</summary>
+      <p>多半是下载不完整（微信 / QQ 内置浏览器会截断）。用系统浏览器重新下载。
+         APK 只打了 <code>arm64-v8a</code>，2018 年后的机型基本都是这个架构。</p>
+    </details>
+    <details>
+      <summary>打开后黑屏 / 一直转圈</summary>
+      <p>首次启动要在本地起服务并拉数据，等 5 秒。超过 15 秒还黑，
+         大概率是网络问题（新浪接口被限制）。切到 4G / 5G 再试。</p>
+    </details>
+    <details>
+      <summary>为什么不能像网页一样直接打开？</summary>
+      <p>因为新浪的行情接口<b>会校验 Referer</b>，浏览器发不了自定义 Referer，
+         从任何网站发起的请求都会被返回 <code>Forbidden</code>。
+         所以抓取必须在本地 Python 里做 —— 这就是为什么静态托管跑不起来，必须装 App。</p>
+    </details>
+    <details>
+      <summary>数据是实时的吗？</summary>
+      <p>行情 5 秒一轮，深度分析（K线 + 缠论 + 筹码 + 转折判断）30 秒一轮。
+         数据源是新浪财经免费接口，有几分钟延迟属于正常。</p>
+    </details>
+    <details>
+      <summary>要不要登录 / 会不会上传我的数据</summary>
+      <p>不用登录，也没有服务器。所有抓取和分析都在你手机本地完成，
+         自选股存在本地，不上传任何东西。</p>
+    </details>
+    <details>
+      <summary>电脑上怎么用？</summary>
+      <p>电脑版还是双击 <code>启动.bat</code>，浏览器自动打开。
+         源码在 <a href="https://github.com/123xzw999/shigu" style="color:#58a6ff">GitHub</a>，
+         纯 Python 标准库 + 原生 JS，零第三方依赖。</p>
+    </details>
+  </div>
+</section>
+
+</main>
 
 <footer>
   <div class="wrap">
-    <b>交易很轻松</b> · MIT License · 数据来自新浪财经公开接口<br>
-    代码：<a href="https://github.com/123xzw999/jiaoyi-henqingsong" style="color:#7dd3a0">github.com/123xzw999/jiaoyi-henqingsong</a>
-    <div class="warn">
-      ⚠️ 本项目仅用于量化研究与技术学习，不构成任何投资建议。A 股受政策和情绪影响极大，
-      任何量化评分都只是「当前量价筹码结构的汇总」，不是预测。据此操作风险自担。
-    </div>
+    数据来源：新浪财经（行情 / K线 / 板块 / 基金净值 / 外围市场）<br>
+    指标对齐 pandas-ta · 缠论结构自研 · CYQ 筹码模型 · 转折点用 Pagan-Sossounov 删失局部极值标注<br>
+    <br>
+    本工具仅做量化研究与学习，<b>不构成任何投资建议</b>。市场有风险，决策请自负。
   </div>
 </footer>
 
+<script>
+// 从 GitHub Releases 取最新 APK 直链和大小，省得每次手动改页面
+(function () {
+  var dl = document.getElementById('dl');
+  var meta = document.getElementById('dlmeta');
+  fetch('https://api.github.com/repos/123xzw999/shigu/releases/tags/latest', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d || !d.assets) return;
+      var apk = d.assets.filter(function (a) { return /\.apk$/i.test(a.name); })[0];
+      if (!apk) return;
+      dl.href = apk.browser_download_url;
+      var mb = (apk.size / 1048576).toFixed(1);
+      meta.innerHTML = 'Android 7.0+ · arm64 · <b>' + mb + ' MB</b> · 点开即装';
+    })
+    .catch(function () { /* 拿不到就保持默认跳转 */ });
+})();
+</script>
 </body>
 </html>
