@@ -18,7 +18,10 @@ TOP = "jyhqs"
 # (相对路径, 是否递归)
 INCLUDE_FILES = ["server.py", "cli.py", "LICENSE", "README.md"]
 INCLUDE_DIRS = ["core", "web", "termux"]
-EXTRA = [("data", "watchlist.json")]
+# 转折判断的模型参数和板块映射必须带上，否则手机版没有「转折点判断」
+EXTRA = [("data", "watchlist.json"),
+         ("data", "turning_profiles.json"),
+         ("data", "sector_map.json")]
 
 SKIP_DIR = {"__pycache__", ".git"}
 SKIP_EXT = {".pyc", ".pyo", ".bat", ".png", ".jpg"}
@@ -50,8 +53,8 @@ def collect():
 
 
 def main():
-    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
-        os.path.expanduser("~"), "Desktop", "jyhqs-mobile.zip")
+    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(BASE, "dist", "shigu-termux.zip")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
     items = collect()
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for src, rel in items:

@@ -15,7 +15,11 @@ source.exclude_patterns = *.pyc,*.pyo,*.bat,*.png,*.jpg,*.zip,boot_error.log
 
 # ---------------------------------------------------------------- 依赖
 # certifi 必须有：Android 上的 Python 没有系统 CA，访问 https 会证书校验失败
-requirements = python3,kivy,android,certifi
+# charset-normalizer 必须钉到 2.x：
+# kivy 依赖 requests，requests 依赖 charset-normalizer，
+# 而 3.x 只发 wheel（没有 android_24_arm64_v8a 平台的），p4a 的 pip 会直接报
+# "not a supported wheel on this platform"。2.1.1 有 sdist + setup.py，能装。
+requirements = python3,kivy,android,certifi,charset-normalizer==2.1.1
 
 orientation = portrait
 fullscreen = 1

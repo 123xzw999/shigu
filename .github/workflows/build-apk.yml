@@ -62,14 +62,24 @@ jobs:
 
       - name: Build with buildozer
         env:
-          # 关掉 buildozer 的交互提示，CI 里不能卡在 y/n
           BUILDOZER_WARN_ON_ROOT: 0
         run: |
-          yes | buildozer -v android debug 2>&1 | tail -n 400
+          # 必须 pipefail：否则 `| tail` 会把 buildozer 的失败吞成成功
+          set -o pipefail
+          yes | buildozer -v android debug 2>&1 | tee buildozer.log | tail -n 300
 
       - name: Show artifacts
         if: always()
         run: ls -la bin/ || true
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildozer-log
+          path: buildozer.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
