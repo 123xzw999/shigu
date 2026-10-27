@@ -303,6 +303,16 @@ footer a{color:#58a6ff}
          所以抓取必须在本地 Python 里做 —— 这就是为什么静态托管跑不起来，必须装 App。</p>
     </details>
     <details>
+      <summary>APK 装不上，还有别的办法吗？</summary>
+      <p>有，用 Termux（安卓上的 Linux 终端）跑同一套代码，功能完全一样：<br>
+         ① 装 <b>Termux</b>（从 F-Droid 或 GitHub 下载，别用应用商店的老版本）<br>
+         ② 下载 <code>shigu-termux.zip</code>，解压到 Termux 主目录<br>
+         ③ 执行 <code>bash ~/jyhqs/termux/install.sh</code>，装完再执行
+         <code>bash ~/jyhqs/termux/start.sh</code><br>
+         ④ 浏览器打开 <code>http://127.0.0.1:8765</code><br>
+         好处是能改代码、能跑命令行版；坏处是要敲几条命令。</p>
+    </details>
+    <details>
       <summary>数据是实时的吗？</summary>
       <p>行情 5 秒一轮，深度分析（K线 + 缠论 + 筹码 + 转折判断）30 秒一轮。
          数据源是新浪财经免费接口，有几分钟延迟属于正常。</p>
