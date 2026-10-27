@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 运行时数据（自选股、缓存、日志）
+data/cache/
+data/*.json
+data/*.png
+data/*.log
+# 转折点模型参数与板块映射是必需运行时数据，必须提交
+!data/turning_profiles.json
+!data/sector_map.json
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,11 @@
+# .bat 是 GBK 编码，禁止任何换行/编码转换，否则中文提示会乱码
+*.bat -text
+
+*.py text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.png binary
+*.jpg binary

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易很轻松 · 新浪财经数据分析</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== 顶部 ===================== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">新浪财经</span>
+      <span class="sep">|</span>
+      <span class="sub">交易很轻松</span>
+    </div>
+    <button class="backbtn" id="btnBack" title="返回上一页（Alt+←）" disabled>←</button>
+    <nav class="nav">
+      <a class="on" data-nav="stock">个股</a>
+      <a data-nav="fund">基金</a>
+      <a data-nav="sector">板块</a>
+      <a data-nav="rank">排行</a>
+      <a data-nav="global">全球</a>
+      <a data-nav="about">说明</a>
+    </nav>
+    <div class="searchbox">
+      <input id="q" type="text" placeholder="输入代码 / 名称 / 拼音，如 600519、茅台、510300" autocomplete="off">
+      <button id="go">分析</button>
+      <div id="suggest" class="suggest"></div>
+    </div>
+    <div class="status">
+      <span class="dot" id="dot"></span>
+      <span id="statustext">连接中…</span>
+      <span class="ring"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" class="ring-bg"/><circle cx="10" cy="10" r="8" class="ring-fg" id="ringfg"/></svg></span>
+      <span class="cd" id="countdown">20s</span>
+    </div>
+  </header>
+
+  <!-- ===================== 指数条 ===================== -->
+  <div class="indexbar" id="indexbar"></div>
+
+  <!-- ===================== 全球市场条 ===================== -->
+  <div class="globalbar">
+    <span class="gb-label">全球</span>
+    <div class="gb-track" id="globalbar"></div>
+    <div class="gb-risk" id="graiChip" title="点击查看全球市场详情">
+      <span class="gb-risk-label">GRAI</span>
+      <span class="gb-risk-val" id="graiVal">—</span>
+      <span class="gb-risk-lv" id="graiLv">—</span>
+      <span class="gb-more">详情 ▸</span>
+    </div>
+  </div>
+
+  <!-- ===================== 主体 ===================== -->
+  <main class="layout">
+
+    <!-- 左：自选 -->
+    <aside class="side">
+      <div class="side-head">
+        <span>自选股</span>
+        <span class="hint">双击删除</span>
+      </div>
+      <div id="watchlist" class="watchlist"></div>
+      <div class="side-foot">
+        <div class="side-title">数据源</div>
+        <div class="side-note">新浪财经 · 实时行情 / K线 / 板块<br>轮询周期 20 秒</div>
+      </div>
+    </aside>
+
+    <!-- 中：行情 + 图表 -->
+    <section class="center">
+
+      <!-- 列表视图（导航栏切换） -->
+      <div class="listview" id="listview">
+        <div class="lv-head">
+          <div class="lv-title" id="lvTitle">个股</div>
+          <div class="lv-sub" id="lvSub"></div>
+          <div class="lv-tabs" id="lvTypeTabs"></div>
+          <div class="lv-sorts" id="lvSorts"></div>
+          <button class="lv-close" id="lvClose">返回图表</button>
+        </div>
+        <div class="lv-tabs scroll" id="lvTabs" style="display:none"></div>
+        <div class="lv-table" id="lvTable">
+          <div class="lv-empty">加载中…</div>
+        </div>
+      </div>
+
+      <div class="quotehead">
+        <div class="qh-left">
+          <div class="qh-title">
+            <h1 id="stockname">—</h1>
+            <span class="code" id="stockcode"></span>
+            <span class="badge" id="stockkind"></span>
+          </div>
+          <div class="qh-price">
+            <span class="price" id="price">—</span>
+            <span class="chg" id="chg">—</span>
+            <span class="pct" id="pct">—</span>
+          </div>
+          <div class="qh-meta" id="meta"></div>
+        </div>
+        <div class="qh-right">
+          <div class="score-mini">
+            <div class="sm-label">综合评分</div>
+            <div class="sm-val" id="scoreMini">—</div>
+            <div class="sm-lv" id="levelMini">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chartcard">
+        <div class="chart-toolbar">
+          <div class="tabs" id="scaleTabs">
+            <button data-scale="5">5分</button>
+            <button data-scale="15">15分</button>
+            <button data-scale="30">30分</button>
+            <button data-scale="60">60分</button>
+            <button data-scale="240" class="on">日线</button>
+            <button data-scale="1200">周线</button>
+            <button data-scale="7200">月线</button>
+          </div>
+          <div class="tools">
+            <label><input type="checkbox" id="tMA" checked> 均线</label>
+            <label><input type="checkbox" id="tBOLL"> BOLL</label>
+            <label><input type="checkbox" id="tCHAN" checked> 缠论</label>
+            <label><input type="checkbox" id="tCHIP" checked> 筹码</label>
+            <label><input type="checkbox" id="tSIG" checked> 买卖点</label>
+            <span class="vsep"></span>
+            <div class="tabs small" id="subTabs">
+              <button data-sub="macd" class="on">MACD</button>
+              <button data-sub="kdj">KDJ</button>
+              <button data-sub="rsi">RSI</button>
+            </div>
+            <span class="vsep"></span>
+            <button class="fsbtn" id="btnFullscreen" title="全屏查看 K 线（快捷键 F）">⛶ 全屏</button>
+          </div>
+        </div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="kline"></canvas>
+          <div class="tip" id="tip"></div>
+          <div class="loading" id="loading">加载中…</div>
+          <div class="fs-hint">Esc / F 退出全屏 · 滚轮缩放 · 拖动平移 · 双击复位</div>
+        </div>
+      </div>
+
+      <div class="bottomgrid">
+        <div class="card">
+          <div class="card-head"><span>板块热点</span><span class="hint" id="sectorTime"></span></div>
+          <div class="sector-list" id="sectorList"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>涨幅排行</span><span class="hint">实时</span></div>
+          <div class="rank-list" id="rankList"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>K线形态信号</span><span class="hint" id="patCount"></span></div>
+          <div class="pat-list" id="patList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右：分析面板 -->
+    <aside class="panel" id="panel">
+
+      <div class="pcard score-card">
+        <div class="pc-head">趋势共振评分 <span class="tag" id="scoreScale">日线</span></div>
+        <div class="gauge-wrap">
+          <canvas id="gauge" width="220" height="130"></canvas>
+          <div class="gauge-center">
+            <div class="g-num" id="gNum">—</div>
+            <div class="g-lv" id="gLv">—</div>
+          </div>
+        </div>
+        <div class="g-meta">
+          <div><span>置信度</span><b id="gConf">—</b></div>
+          <div><span>共振一致性</span><b id="gAgree">—</b></div>
+        </div>
+        <div class="dims" id="dims"></div>
+      </div>
+
+      <div class="pcard">
+        <div class="pc-head">筹码分布 <span class="tag" id="chipTag">CYQ</span></div>
+        <div class="chip-legend">
+          <span><i class="sw main"></i>主力筹码</span>
+          <span><i class="sw retail"></i>散户筹码</span>
+          <span><i class="sw price"></i>现价</span>
+        </div>
+        <div class="chip-wrap"><canvas id="chip" width="340" height="230"></canvas></div>
+        <div class="chip-stats" id="chipStats"></div>
+        <div class="zones" id="zones"></div>
+      </div>
+
+      <div class="pcard" id="fundCard" style="display:none">
+        <div class="pc-head">基金评价 <span class="tag" id="fundType">—</span></div>
+        <div class="fund-head">
+          <div class="fund-score" id="fundScore">—</div>
+          <div class="fund-meta">
+            <div id="fundClass">—</div>
+            <div id="fundBench">基准 —</div>
+          </div>
+        </div>
+        <div class="fund-kpi" id="fundKpi"></div>
+        <div class="fund-style" id="fundStyle"></div>
+        <div class="dims" id="fundDims"></div>
+      </div>
+
+      <div class="pcard" id="turnCard" style="display:none">
+        <div class="pc-head">转折点判断 <span class="tag" id="turnSector">—</span></div>
+        <div class="turn-state" id="turnState"></div>
+        <div class="turn-rev" id="turnRev"></div>
+        <div class="turn-phase" id="turnPhase"></div>
+        <div class="turn-ev" id="turnEv"></div>
+        <div class="turn-note" id="turnNote"></div>
+      </div>
+
+      <div class="pcard">
+        <div class="pc-head">操作建议 <span class="tag" id="actTag">—</span></div>
+        <div class="advice-main" id="adviceMain">—</div>
+        <ul class="advice-notes" id="adviceNotes"></ul>
+        <div class="levels" id="levels"></div>
+      </div>
+
+      <div class="pcard">
+        <div class="pc-head">缠论结构 <span class="tag" id="chanTrend">—</span></div>
+        <div class="chan-grid" id="chanGrid"></div>
+        <div class="sig-list" id="sigList"></div>
+      </div>
+
+      <div class="pcard">
+        <div class="pc-head">主力阶段 <span class="tag" id="phaseTag">—</span></div>
+        <div class="phase-bar" id="phaseBar"></div>
+        <div class="phase-desc" id="phaseDesc"></div>
+        <div class="phase-feat" id="phaseFeat"></div>
+        <div class="seg-title">各阶段主力成本（成交量加权）</div>
+        <div class="seg-list" id="segList"></div>
+      </div>
+
+      <div class="pcard">
+        <div class="pc-head">阶段涨跌</div>
+        <div class="perf" id="perf"></div>
+      </div>
+
+    </aside>
+  </main>
+
+  <footer class="foot">
+    数据来源：新浪财经（行情/K线/板块/基金净值/外围市场） · 指标体系参照 pandas-ta 与 srl-python-indicators · 筹码模型 CYQ 三角分布 + 换手衰减
+    <br>本工具仅做量化研究与学习，不构成任何投资建议。
+  </footer>
+</div>
+
+<!-- ===================== 全球市场弹层 ===================== -->
+<div class="modal" id="gmodal">
+  <div class="modal-mask" id="gmask"></div>
+  <div class="modal-body">
+    <div class="modal-head">
+      <span>全球市场 · 风险偏好</span>
+      <span class="modal-sub" id="gmodalTime"></span>
+      <button class="modal-x" id="gmodalClose">×</button>
+    </div>
+    <div class="modal-content" id="gmodalContent"></div>
+  </div>
+</div>
+
+<script src="/static/kline.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
