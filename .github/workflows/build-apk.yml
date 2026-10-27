@@ -13,6 +13,9 @@ on:
       - 'data/turning_profiles.json'
       - 'data/sector_map.json'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -68,10 +71,28 @@ jobs:
         if: always()
         run: ls -la bin/ || true
 
-      - name: Upload APK
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: shigu-apk
           path: bin/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      # 直接发到 Releases，手机上点链接就能下，不用登录 GitHub
+      - name: Publish release
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APK=$(ls bin/*.apk | head -n 1)
+          NEW=$(basename "$APK")
+          echo "APK: $NEW"
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create latest "$APK" \
+            --title "识股 APK · 最新构建" \
+            --notes "构建时间：$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          安装：下载 .apk → 允许「安装未知来源应用」→ 安装即可。
+          首次打开会拉取行情，等 3~5 秒出界面。" \
+            --prerelease
