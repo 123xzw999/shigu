@@ -9,7 +9,7 @@ version = 1.0.0
 
 # 源码根目录就是项目根（main.py 在这里）
 source.dir = .
-source.include_exts = py,html,css,js,json,md,txt
+source.include_exts = py,html,css,js,json,md,txt,xml
 source.exclude_dirs = .git,.github,docs,termux,__pycache__,bin,data/cache
 source.exclude_patterns = *.pyc,*.pyo,*.bat,*.png,*.jpg,*.zip,boot_error.log
 
@@ -29,10 +29,9 @@ presplash.filename = %(source.dir)s/docs/presplash.png
 
 # ---------------------------------------------------------------- Android
 android.permissions = INTERNET,ACCESS_NETWORK_STATE
-# targetSdk 27：Android 9+ 对 targetSdk>=28 的应用默认禁止明文 HTTP，
-# 而我们必须连 127.0.0.1:8765。降到 27 就不用改 manifest，最省事也最不容易出错。
-# （不走 Google Play，只是自己装，targetSdk 老一点没影响）
-android.api = 27
+# compileSdk 必须 33：p4a 的 SDL2 Java 代码（HIDDeviceManager）用了 API 28+ 的符号，
+# 用 27 编译会直接 "cannot find symbol"。
+android.api = 33
 android.minapi = 24
 android.ndk_api = 24
 android.archs = arm64-v8a
@@ -41,6 +40,11 @@ android.allow_backup = True
 android.release_artifact = shigu
 
 android.meta_data =
+
+# Android 9+ 对 targetSdk>=28 的应用默认禁明文 HTTP，而 APK 里的 WebView 要连
+# 127.0.0.1:8765。p4a 的清单模板留了 {{ args.extra_manifest_application_arguments }} 插槽，
+# buildozer 对应这个选项，把内容塞进 <application> 标签里。
+android.extra_manifest_application_arguments = android/extra_manifest_app.xml
 
 # ---------------------------------------------------------------- 打包
 p4a.bootstrap = sdl2
