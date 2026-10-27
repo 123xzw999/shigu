@@ -43,6 +43,11 @@ jobs:
             zlib1g-dev libncurses-dev libtinfo6 cmake libffi-dev \
             libssl-dev libltdl-dev ccache
 
+      # p4a 装 kivy 时会独立解析 requests 的依赖，把 charset-normalizer 拉到 3.5.2
+      # （只有 cp314-android 的 wheel，装不上）。用 pip 全局约束把它钉死。
+      - name: Pin charset-normalizer
+        run: echo "charset-normalizer==2.1.1" > "$GITHUB_WORKSPACE/constraints.txt"
+
       - name: Install buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
@@ -56,13 +61,14 @@ jobs:
           path: |
             ~/.buildozer
             ~/.cache/pip
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-v2-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
-            buildozer-${{ runner.os }}-
+            buildozer-v2-${{ runner.os }}-
 
       - name: Build with buildozer
         env:
           BUILDOZER_WARN_ON_ROOT: 0
+          PIP_CONSTRAINT: ${{ github.workspace }}/constraints.txt
         run: |
           # 必须 pipefail：否则 `| tail` 会把 buildozer 的失败吞成成功
           set -o pipefail
